@@ -33,11 +33,11 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 <script>
-
-var attr;
+$( document ).ready(function() {
+var current_attr;
 var attributes;
 var num_of_bins = 8
-var csv_data
+var csv_data;
 
 
 
@@ -45,6 +45,7 @@ var csv_data
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
+    radius = Math.min(width, height) / 2;
 
 // set the ranges
 var x = d3.scaleBand()
@@ -56,19 +57,27 @@ var y = d3.scaleLinear()
 // append the svg object to the body of the page
 // append a 'group' element to 'svg'
 // moves the 'group' element to the top left margin
-var svg = d3.select("#svg_div").append("svg")
+var svg=d3.select("#svg_div").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", 
+          "translate(" + margin.left + "," + margin.top + ")");;
+
+
+function draw_bar_chart(data, attr)
+{
+  var values = []
+  d3.select("svg").remove()
+  svg = d3.select("#svg_div").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", 
           "translate(" + margin.left + "," + margin.top + ")");
-
-
-function draw_chart(data, attr)
-{
-  var values = []
+  current_attr = attr
   $("#attr_name").html("Selected Attribute: <b>"+attr+"</b>")
-  svg.selectAll("*").remove();
+  
   //format the data
   data.forEach(function(d) {
     values.push(d[attr]);
@@ -126,6 +135,98 @@ function draw_chart(data, attr)
   svg.append("g")
       .call(d3.axisLeft(y));
 
+
+  svg.on("click",function(){
+    console.log("svg clicked")
+    draw_pie_chart(csv_data)
+
+  });
+
+}
+
+function draw_pie_chart(data)
+{
+  console.log("pie chart")
+  var values = []
+  attr = current_attr
+  $("#attr_name").html("Selected Attribute: <b>"+attr+"</b>")
+  //svg.selectAll("*").remove();
+  //format the data
+  data.forEach(function(d) {
+    values.push(d[attr]);
+  });
+
+  var min = Math.min.apply(null,values)
+  var max = Math.max.apply(null,values)
+
+  var bin_size = Math.ceil((max-min)/num_of_bins)
+
+  console.log(min,max,bin_size)
+
+  var bin_data = []
+  
+  for (var i = 0; i < num_of_bins; i++) {
+    bin_data.push(0)
+  }
+
+  data.forEach(function(d) {
+    bin_data[Math.floor((d[attr]-min)/bin_size)] += 1
+  });
+  
+  var bar_data = []
+  var i = 1
+  bin_data.forEach(function(d){
+
+    bar_data.push({"index": i, "value":d})
+    i += 1
+
+  });
+
+  var data = [10, 20, 100]; 
+  var color = d3.scaleOrdinal(d3.schemeCategory10);     
+
+  // var color = d3.scaleOrdinal()
+  //     .range(["#98abc5", "#8a89a6", "#7b6888"]);
+
+  var arc = d3.arc()
+      .outerRadius(radius - 10)
+      .innerRadius(0);
+
+  var labelArc = d3.arc()
+      .outerRadius(radius - 40)
+      .innerRadius(radius - 40);
+
+  var pie = d3.pie()
+      .sort(null)
+      .value(function(d) { return d; });
+  d3.select("svg").remove()
+  svg = d3.select("#svg_div").append("svg")
+      .attr("width", width)
+      .attr("height", height)
+    .append("g")
+      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+    var g = svg.selectAll(".arc")
+        .data(pie(bin_data))
+      .enter().append("g")
+        .attr("class", "arc");
+
+    g.append("path")
+        .attr("d", arc)
+        .style("fill", function(d) { return color(d.data); });
+
+    g.append("text")
+        .attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
+        .attr("dy", ".35em")
+        .text(function(d) { return d.data; });
+
+    svg.on("click",function(){
+      console.log("svg clicked")
+      draw_bar_chart(csv_data,attr)
+
+    });
+
+
 }
 
 // get the data
@@ -133,7 +234,8 @@ d3.csv("day.csv", function(error, data) {
   if (error) throw error;
   csv_data = data
   console.log(data)
-  draw_chart(csv_data, "cnt")
+  current_attr = "cnt"
+  draw_bar_chart(csv_data, "cnt")
   attrs = ["casual","registered","cnt"]
   attrs.forEach(function(d){
 
@@ -141,21 +243,17 @@ d3.csv("day.csv", function(error, data) {
 
   });
 
-$("li a.attrs_list").click(function(e) {
-        console.log("cclicked!!!!!")
-        console.log(e.target.innerText);
-        draw_chart(csv_data, e.target.innerText)
-});
-  
+  $("li a.attrs_list").click(function(e) {
+          console.log("cclicked!!!!!")
+          console.log(e.target.innerText);
+          draw_bar_chart(csv_data, e.target.innerText)
+  });
 
-
-  // attributes = ["casual","registered","cnt"]
-  // attr = 'cnt'
-
-  
 
 });
 
+
+});
 
 </script>
 </body>
