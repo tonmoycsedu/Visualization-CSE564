@@ -2,7 +2,7 @@
 <meta charset="utf-8">
 <style> /* set the CSS */
 
-.bar { fill: steelblue; }
+.bar { fill: steelblue;  transition: all .2s ease-in-out;}
 
 /*.toolTip {
   line-height: 1;
@@ -34,6 +34,9 @@
 }*/
 .bar:hover {
   fill: orangered ;
+  transform: scale(1.01,1.01);
+  transform-origin: center bottom;
+
 }
 
 #tooltip {
