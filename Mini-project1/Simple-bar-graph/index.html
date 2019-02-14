@@ -2,7 +2,7 @@
 <meta charset="utf-8">
 <style> /* set the CSS */
 
-.bar { fill: steelblue;  transition: all .2s ease-in-out;}
+.bar { fill: #4CAF50;  transition: all .2s ease-in-out;}
 
 /*.toolTip {
   line-height: 1;
@@ -32,6 +32,42 @@
   top: 100%;
   left: 0;
 }*/
+
+.slidecontainer {
+  width: 100%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 25px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
 .bar:hover {
   fill: orangered ;
   transform: scale(1.01,1.01);
@@ -70,15 +106,40 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
 </head>
 <body>
-  <h1>Bike Sharing Dataset</h1>
+  
 <div class="container">
+  <div class="row" style="text-align:center;">
+    <h1> CSE 564 Mini Project: Bike Sharing Dataset</h1><br><br>
+  </div>
+  <div class="row" style="margin: auto;">
+   <div class="col-lg-4"></div>
+   <div class="col-lg-2 dropdown">
+
+      <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown" id="attr_value">
+      <span class="caret"></span></button>
+      <ul class="dropdown-menu">
+        <!-- <li><a href="#">HTML</a></li>
+        <li><a href="#">CSS</a></li>
+        <li><a href="#">JavaScript</a></li> -->
+      </ul>
+      <!-- <p>Attributes</p> -->
+    </div>
+    <!-- <p id="attr_name"> Selected Attribute: <b>cnt</b></p>  -->
+    <div class="col-lg-2">
+      <input type="range" min="2" max="15" value="5" class="slider" id="myRange">
+      <p id="slider_value"></p>
+    </div>
+    <div class="col-lg-4"></div>
+      
+  </div>
+  <br><br><br>
   <div class="row">
     <div class="col-lg-2">
-      <div class="panel panel-primary">
+      <!-- <div class="panel panel-primary">
           <div class="panel-heading">Attributes</div>
           <div class="panel-body" id= "attributes"></div>
-      </div>
-      <p id="attr_name"> Selected Attribute: <b>cnt</b></p> 
+      </div> -->
+     
       
     </div>
     <div class="col-lg-10" id="svg_div">
@@ -101,8 +162,22 @@
 $( document ).ready(function() {
 var current_attr;
 var attributes;
-var num_of_bins = 8
+var num_of_bins = 5
 var csv_data;
+
+$("#slider_value").html("# of bins: <b>"+$('#myRange').val()+"</b>")
+
+// $(document).on('input', '#slider', function() {
+//     $('#slider_value').html( $(this).val() );
+// });
+
+$("#myRange").on("change",function(){
+  console.log("hello")
+  $("#slider_value").html("# of bins: <b>"+$('#myRange').val()+"</b>")
+  num_of_bins = $('#myRange').val()
+  draw_bar_chart(csv_data, current_attr)
+
+})
 
 
 
@@ -346,15 +421,17 @@ d3.csv("day.csv", function(error, data) {
   csv_data = data
   console.log(data)
   current_attr = "cnt"
+  $("#attr_value").html(current_attr+'<span class="caret"></span>')
   draw_bar_chart(csv_data, "cnt")
   attrs = ["casual","registered","cnt"]
   attrs.forEach(function(d){
 
-    $("#attributes").append('<li><a class="attrs_list" href="#">'+d+'</a></li>')
+    $(".dropdown-menu").append('<li><a class="attrs_list" href="#">'+d+'</a></li>')
 
   });
 
   $("li a.attrs_list").click(function(e) {
+          $("#attr_value").html(e.target.innerText+'<span class="caret"></span>')
           console.log("cclicked!!!!!")
           console.log(e.target.innerText);
           draw_bar_chart(csv_data, e.target.innerText)
