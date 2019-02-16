@@ -166,7 +166,9 @@ var current_attr;
 var attributes;
 var num_of_bins = 5
 var csv_data;
-
+var values = [];
+var bin_data = [];
+var bar_data = []
 $("#slider_value").html("# of bins: <b>"+$('#myRange').val()+"</b>")
 
 // $(document).on('input', '#slider', function() {
@@ -209,7 +211,7 @@ var svg=d3.select("#svg_div").append("svg")
 
 function draw_bar_chart(data, attr)
 {
-  var values = []
+  
   d3.select("svg").remove()
   svg = d3.select("#svg_div").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -221,8 +223,21 @@ function draw_bar_chart(data, attr)
   $("#attr_name").html("Selected Attribute: <b>"+attr+"</b>")
   
   //format the data
+  // data.forEach(function(d) {
+  //   if(d[attr] == 0)
+  //     values.push(d[attr]);
+  //   else
+  //     values.push(Math.log10(d[attr]))
+  // });
+
+  values = []
+  bin_data = []
+  bar_data = []
+
   data.forEach(function(d) {
-    values.push(d[attr]);
+    
+      values.push(d[attr]);
+    
   });
 
   var min = Math.min.apply(null,values)
@@ -232,7 +247,7 @@ function draw_bar_chart(data, attr)
 
   console.log(min,max,bin_size)
 
-  var bin_data = []
+  
   
   for (var i = 0; i < num_of_bins; i++) {
     bin_data.push(0)
@@ -242,7 +257,7 @@ function draw_bar_chart(data, attr)
     bin_data[Math.floor((d[attr]-min)/bin_size)] += 1
   });
   
-  var bar_data = []
+  
 
   for (var i = 0; i < num_of_bins; i++) {
     bar_data.push({"index": i+1, "value":bin_data[i]})
@@ -338,39 +353,13 @@ function draw_pie_chart(data)
 {
   d3.select("#tooltip").classed("hidden", true);
   console.log("pie chart")
-  var values = []
+  
   attr = current_attr
   $("#attr_name").html("Selected Attribute: <b>"+attr+"</b>")
   //svg.selectAll("*").remove();
   //format the data
-  data.forEach(function(d) {
-    values.push(d[attr]);
-  });
-
-  var min = Math.min.apply(null,values)
-  var max = Math.max.apply(null,values)
-
-  var bin_size = Math.ceil((max-min)/num_of_bins)
-
-  console.log(min,max,bin_size)
-
-  var bin_data = []
   
-  for (var i = 0; i < num_of_bins; i++) {
-    bin_data.push(0)
-  }
-
-  data.forEach(function(d) {
-    bin_data[Math.floor((d[attr]-min)/bin_size)] += 1
-  });
   
-  var bar_data = []
-  for (var i = 0; i < num_of_bins; i++) {
-    bar_data.push({"index": i+1, "value":bin_data[i]})
-  }
-
-  if(bin_data.length > num_of_bins)
-    bin_data.splice(bin_data.length-1, 1);
 
   //var data = [10, 20, 100]; 
   var color = d3.scaleOrdinal(d3.schemeCategory10);     
@@ -420,14 +409,18 @@ function draw_pie_chart(data)
 }
 
 // get the data
-d3.csv("day.csv", function(error, data) {
+d3.csv("income-firearm-gun-happiness1.csv", function(error, data) {
   if (error) throw error;
   csv_data = data
   console.log(data)
-  current_attr = "cnt"
+  current_attr = "PerCapitaIncome"
   $("#attr_value").html(current_attr+'<span class="caret"></span>')
-  draw_bar_chart(csv_data, "cnt")
-  attrs = ["casual","registered","cnt"]
+  draw_bar_chart(csv_data, current_attr)
+  attrs = data["columns"]
+  //attrs = ["Crime in 1981","Crime in 1982"]
+  // csv_data.forEach(function(row) {
+  //     attrs.push(Object.keys(row));
+  // });
   attrs.forEach(function(d){
 
     $(".dropdown-menu").append('<li><a class="attrs_list" href="#">'+d+'</a></li>')
