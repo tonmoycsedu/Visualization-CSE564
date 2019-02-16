@@ -109,7 +109,7 @@
   
 <div class="container">
   <div class="row" style="text-align:center;">
-    <h1> CSE 564 Mini Project: Bike Sharing Dataset</h1><br><br>
+    <h1> CSE 564 Mini Project: USA State Data</h1><br><br>
   </div>
   <div class="row" style="margin: auto;">
    <div class="col-lg-4"></div>
@@ -233,13 +233,22 @@ function draw_bar_chart(data, attr)
   values = []
   bin_data = []
   bar_data = []
+  temp_values = []
+  var val;
 
   data.forEach(function(d) {
-    
-      values.push(d[attr]);
+      temp_values.push(d[attr]);
     
   });
 
+  var min = Math.min.apply(null,temp_values)
+  var max = Math.max.apply(null,temp_values)
+
+  temp_values.forEach(function(d) {
+      val = 200*((d-min)/(max-min));
+      values.push(val);
+    
+  });
   var min = Math.min.apply(null,values)
   var max = Math.max.apply(null,values)
 
@@ -253,8 +262,8 @@ function draw_bar_chart(data, attr)
     bin_data.push(0)
   }
 
-  data.forEach(function(d) {
-    bin_data[Math.floor((d[attr]-min)/bin_size)] += 1
+  values.forEach(function(d) {
+    bin_data[Math.floor((d-min)/bin_size)] += 1
   });
   
   
@@ -359,7 +368,10 @@ function draw_pie_chart(data)
   //svg.selectAll("*").remove();
   //format the data
   
-  
+  if(bin_data.length > num_of_bins)
+    bin_data.splice(bin_data.length-1, 1);
+
+  console.log(bin_data)
 
   //var data = [10, 20, 100]; 
   var color = d3.scaleOrdinal(d3.schemeCategory10);     
@@ -413,7 +425,7 @@ d3.csv("income-firearm-gun-happiness1.csv", function(error, data) {
   if (error) throw error;
   csv_data = data
   console.log(data)
-  current_attr = "PerCapitaIncome"
+  current_attr = data["columns"][0]
   $("#attr_value").html(current_attr+'<span class="caret"></span>')
   draw_bar_chart(csv_data, current_attr)
   attrs = data["columns"]
