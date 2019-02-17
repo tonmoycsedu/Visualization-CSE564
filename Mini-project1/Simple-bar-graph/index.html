@@ -33,6 +33,22 @@
   left: 0;
 }*/
 
+.links line {
+  stroke: #999;
+  stroke-opacity: 0.6;
+}
+
+.nodes circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+text {
+  font-family: sans-serif;
+  font-size: 10px;
+}
+
+
 .slidecontainer {
   width: 100%;
 }
@@ -169,6 +185,7 @@ var csv_data;
 var values = [];
 var bin_data = [];
 var bar_data = []
+var flag = 0
 $("#slider_value").html("# of bins: <b>"+$('#myRange').val()+"</b>")
 
 // $(document).on('input', '#slider', function() {
@@ -183,6 +200,28 @@ $("#myRange").on("change",function(){
 
 })
 
+$("#force_directed").on("click",function(){
+  if(flag == 0)
+  {
+    draw_force_directed();
+    $("#force_directed").html("Go Back to Bar Chart")
+    $( "#myRange" ).prop( "disabled", true );
+    $( "#attr_value" ).prop( "disabled", true );
+    flag = 1
+
+  }
+  else{
+
+    draw_bar_chart(csv_data,current_attr);
+    $("#force_directed").html("Foreced Directed Layout")
+    $( "#myRange" ).prop( "disabled", false );
+    $( "#attr_value" ).prop( "disabled", false );
+    flag = 0
+
+  }
+    
+
+})
 
 
 // set the dimensions and margins of the graph
@@ -237,18 +276,18 @@ function draw_bar_chart(data, attr)
   var val;
 
   data.forEach(function(d) {
-      temp_values.push(d[attr]);
+      values.push(d[attr]);
     
   });
 
-  var min = Math.min.apply(null,temp_values)
-  var max = Math.max.apply(null,temp_values)
+  // var min = Math.min.apply(null,temp_values)
+  // var max = Math.max.apply(null,temp_values)
 
-  temp_values.forEach(function(d) {
-      val = 200*((d-min)/(max-min));
-      values.push(val);
+  // temp_values.forEach(function(d) {
+  //     val = 200*((d-min)/(max-min));
+  //     values.push(val);
     
-  });
+  // });
   var min = Math.min.apply(null,values)
   var max = Math.max.apply(null,values)
 
@@ -420,6 +459,96 @@ function draw_pie_chart(data)
 
 }
 
+function draw_force_directed()
+{
+  d3.select("svg").remove()
+  svg = d3.select("#svg_div").append("svg")
+      .attr("width", width)
+      .attr("height", height)
+
+  var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+  var simulation = d3.forceSimulation()
+      .force("link", d3.forceLink().id(function(d) { return d.id; }))
+      .force("charge", d3.forceManyBody())
+      .force("center", d3.forceCenter(width / 2, height / 2));
+
+  d3.json("states.json", function(error, graph) {
+    if (error) throw error;
+
+    var link = svg.append("g")
+        .attr("class", "links")
+      .selectAll("line")
+      .data(graph.links)
+      .enter().append("line")
+        .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+    var node = svg.append("g")
+        .attr("class", "nodes")
+      .selectAll("g")
+      .data(graph.nodes)
+      .enter().append("g")
+      
+    var circles = node.append("circle")
+        .attr("r", 5)
+        .attr("fill", function(d) { return color(d.group); })
+        .call(d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended));
+
+    var lables = node.append("text")
+        .text(function(d) {
+          return d.id;
+        })
+        .attr('x', 6)
+        .attr('y', 3);
+
+    node.append("title")
+        .text(function(d) { return d.id; });
+
+    simulation
+        .nodes(graph.nodes)
+        .on("tick", ticked);
+
+    simulation.force("link")
+        .links(graph.links);
+
+    function ticked() {
+      link
+          .attr("x1", function(d) { return d.source.x; })
+          .attr("y1", function(d) { return d.source.y; })
+          .attr("x2", function(d) { return d.target.x; })
+          .attr("y2", function(d) { return d.target.y; });
+
+      node
+          .attr("transform", function(d) {
+            return "translate(" + d.x + "," + d.y + ")";
+          })
+    }
+  });
+
+  function dragstarted(d) {
+    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+  }
+
+  function dragged(d) {
+    d.fx = d3.event.x;
+    d.fy = d3.event.y;
+  }
+
+  function dragended(d) {
+    if (!d3.event.active) simulation.alphaTarget(0);
+    d.fx = null;
+    d.fy = null;
+  }
+
+}
+
+
+
 // get the data
 d3.csv("income-firearm-gun-happiness1.csv", function(error, data) {
   if (error) throw error;
@@ -453,4 +582,5 @@ d3.csv("income-firearm-gun-happiness1.csv", function(error, data) {
 });
 
 </script>
+<script src="forced_directed.js"></script>
 </body>
