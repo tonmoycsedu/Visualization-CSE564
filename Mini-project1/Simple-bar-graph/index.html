@@ -517,6 +517,9 @@ function load_data(file_name)
     draw_bar_chart(csv_data, current_attr)
     attrs = data["columns"]
     $(".dropdown-menu").empty()
+    $("#description").hide()
+    $("#force_directed").html("Foreced Directed Layout")
+    flag = 0
     attrs.forEach(function(d){
 
       $(".dropdown-menu").append('<li><a class="attrs_list" href="#">'+d+'</a></li>')
