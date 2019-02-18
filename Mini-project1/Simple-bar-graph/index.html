@@ -2,36 +2,12 @@
 <meta charset="utf-8">
 <style> /* set the CSS */
 
+.site-color { 
+  background-color: #4CAF50 !important;
+  border-color: #4CAF50 !important;
+}
+
 .bar { fill: #4CAF50;  transition: all .2s ease-in-out;}
-
-/*.toolTip {
-  line-height: 1;
-  font-weight: bold;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  border-radius: 2px;
-}*/
-
-/* Creates a small triangle extender for the tooltip */
-/*.toolTip:after {
-  box-sizing: border-box;
-  display: inline;
-  font-size: 10px;
-  width: 100%;
-  line-height: 1;
-  color: rgba(0, 0, 0, 0.8);
-  content: "\25BC";
-  position: absolute;
-  text-align: center;
-}*/
-
-/* Style northward tooltips differently */
-/*.toolTip.n:after {
-  margin: -1px 0 0 0;
-  top: 100%;
-  left: 0;
-}*/
 
 .links line {
   stroke: #999;
@@ -123,9 +99,9 @@ text {
 </head>
 <body>
   
-<div class="container">
+<div class="container-fluid">
   <div class="row" style="text-align:center;">
-    <h1> CSE 564 Mini Project: USA State Data</h1><br><br>
+    <h1 id="title"> CSE 564 Mini Project: US State Data</h1><br><br>
   </div>
   <div class="row" style="margin: auto;">
    <div class="col-lg-4"></div>
@@ -150,17 +126,36 @@ text {
       
   </div>
   <br><br><br>
-  <div class="row ">
-    <div class="col-lg-2 align-middle">
+  <div class="row " style="margin: auto;">
+    <div class="col-lg-2 "></div>
+    <div class="col-lg-2 ">
       <!-- <div class="panel panel-primary">
           <div class="panel-heading">Attributes</div>
           <div class="panel-body" id= "attributes"></div>
       </div> -->
+      <div class="panel panel-default">            
+          <div class="panel-heading site-color">             
+                Upload your csv file
+          </div>
+          <div class="panel-body">
+
+              <form id="file-form" enctype="multipart/form-data">
+                <div class="form-group">
+                  <fieldset>                   
+                      <input type="file" class="form-control-file" id="file-upload" name="new">                 
+                  </fieldset>
+                          
+                </div>
+              </form>
+          </div>        
+      </div>
       <button class="btn btn-success" type="button"  id="force_directed">Foreced Directed Layout</button>
+      <br><br>
+      <div id = "description" > This is a plot showing clusters of states and distance between states based on income data, murder rates and happiness</div>
      
       
     </div>
-    <div class="col-lg-10" id="svg_div">
+    <div class="col-lg-8" id="svg_div">
         <div id="tooltip" class="hidden">
           <p><strong>Frequency</strong></p>
           <p><span id="value">100</span></p>
@@ -176,6 +171,8 @@ text {
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<!-- <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script> -->
 <script>
 $( document ).ready(function() {
 var current_attr;
@@ -186,11 +183,9 @@ var values = [];
 var bin_data = [];
 var bar_data = []
 var flag = 0
-$("#slider_value").html("# of bins: <b>"+$('#myRange').val()+"</b>")
 
-// $(document).on('input', '#slider', function() {
-//     $('#slider_value').html( $(this).val() );
-// });
+$("#slider_value").html("# of bins: <b>"+$('#myRange').val()+"</b>")
+$("#description").hide()
 
 $("#myRange").on("change",function(){
   console.log("hello")
@@ -208,6 +203,7 @@ $("#force_directed").on("click",function(){
     $( "#myRange" ).prop( "disabled", true );
     $( "#attr_value" ).prop( "disabled", true );
     flag = 1
+    $("#description").show()
 
   }
   else{
@@ -217,6 +213,7 @@ $("#force_directed").on("click",function(){
     $( "#myRange" ).prop( "disabled", false );
     $( "#attr_value" ).prop( "disabled", false );
     flag = 0
+    $("#description").hide()
 
   }
     
@@ -261,14 +258,7 @@ function draw_bar_chart(data, attr)
   current_attr = attr
   $("#attr_name").html("Selected Attribute: <b>"+attr+"</b>")
   
-  //format the data
-  // data.forEach(function(d) {
-  //   if(d[attr] == 0)
-  //     values.push(d[attr]);
-  //   else
-  //     values.push(Math.log10(d[attr]))
-  // });
-
+ 
   values = []
   bin_data = []
   bar_data = []
@@ -280,14 +270,7 @@ function draw_bar_chart(data, attr)
     
   });
 
-  // var min = Math.min.apply(null,temp_values)
-  // var max = Math.max.apply(null,temp_values)
-
-  // temp_values.forEach(function(d) {
-  //     val = 200*((d-min)/(max-min));
-  //     values.push(val);
-    
-  // });
+  
   var min = Math.min.apply(null,values)
   var max = Math.max.apply(null,values)
 
@@ -310,23 +293,10 @@ function draw_bar_chart(data, attr)
   for (var i = 0; i < num_of_bins; i++) {
     bar_data.push({"index": i+1, "value":bin_data[i]})
   }
-  // bin_data.forEach(function(d){
-
-  //   bar_data.push({"index": i, "value":d})
-  //   i += 1
-
-  // });
-
+ 
   var tooltip = d3.select("body").append("div").attr("class", "toolTip");
 
-  // var tip = d3.tip()
-  // .attr('class', 'd3-tip')
-  // .offset([-10, 0])
-  // .html(function(d) {
-  //   return "<strong>Frequency:</strong> <span style='color:red'>" + d.value + "</span>";
-  // })
-
-  //var bar_data = {'x':index,'y':bin_data}
+  
   console.log(bar_data)
   //Scale the range of the data in the domains
   // Scale the range of the data in the domains
@@ -362,22 +332,10 @@ function draw_bar_chart(data, attr)
       .on("mouseout", function() {
          d3.select("#tooltip").classed("hidden", true);
          
-         // d3.select(this)
-         //  .style("transform", "scale(1,1)")
-          //.style("transform-origin","50% 50%");
-          // .style("transform-origin","50% 50%");;
+         
 
       })
-      // .on('mouseover', function(d){
-      //   console.log("mouseover")
-      //   tooltip
-      //     .style("left", d3.event.pageX - 50 + "px")
-      //     .style("top", d3.event.pageY - 70 + "px")
-      //     .style("display", "inline-block")
-      //     .html("<strong>Frequency:</strong> <span style='color:red'>" + d.value + "</span>")
-
-      // })
-      // .on("mouseout", function(d){ console.log("mouseout"); tooltip.style("display", "none");});
+      
 
   // add the x Axis
   svg.append("g")
@@ -415,8 +373,6 @@ function draw_pie_chart(data)
   //var data = [10, 20, 100]; 
   var color = d3.scaleOrdinal(d3.schemeCategory10);     
 
-  // var color = d3.scaleOrdinal()
-  //     .range(["#98abc5", "#8a89a6", "#7b6888"]);
 
   var arc = d3.arc()
       .outerRadius(radius - 10)
@@ -548,35 +504,57 @@ function draw_force_directed()
 }
 
 
+function load_data(file_name)
+{
+  // get the data
+  d3.csv(file_name, function(error, data) {
+    if (error) throw error;
+    $("#title").html("CSE 564 Mini Project: "+ file_name)
+    csv_data = data
+    console.log(data)
+    current_attr = data["columns"][0]
+    $("#attr_value").html(current_attr+'<span class="caret"></span>')
+    draw_bar_chart(csv_data, current_attr)
+    attrs = data["columns"]
+    $(".dropdown-menu").empty()
+    attrs.forEach(function(d){
 
-// get the data
-d3.csv("income-firearm-gun-happiness1.csv", function(error, data) {
-  if (error) throw error;
-  csv_data = data
-  console.log(data)
-  current_attr = data["columns"][0]
-  $("#attr_value").html(current_attr+'<span class="caret"></span>')
-  draw_bar_chart(csv_data, current_attr)
-  attrs = data["columns"]
-  //attrs = ["Crime in 1981","Crime in 1982"]
-  // csv_data.forEach(function(row) {
-  //     attrs.push(Object.keys(row));
-  // });
-  attrs.forEach(function(d){
+      $(".dropdown-menu").append('<li><a class="attrs_list" href="#">'+d+'</a></li>')
 
-    $(".dropdown-menu").append('<li><a class="attrs_list" href="#">'+d+'</a></li>')
+    });
+
+    $("li a.attrs_list").click(function(e) {
+            $("#attr_value").html(e.target.innerText+'<span class="caret"></span>')
+            console.log("cclicked!!!!!")
+            console.log(e.target.innerText);
+            draw_bar_chart(csv_data, e.target.innerText)
+    });
+
 
   });
 
-  $("li a.attrs_list").click(function(e) {
-          $("#attr_value").html(e.target.innerText+'<span class="caret"></span>')
-          console.log("cclicked!!!!!")
-          console.log(e.target.innerText);
-          draw_bar_chart(csv_data, e.target.innerText)
+}
+load_data("state-data.csv")
+
+$('#file-upload').on('change', function(e) {
+
+    //check file length
+    if (!e.target.files.length) return;  
+
+    var file = e.target.files[0];
+    data_name = file.name;
+
+    var ext = data_name.split('.').pop();
+    if (ext != "csv") {
+        alert("File format error");
+    } 
+    else {
+      $( "#myRange" ).prop( "disabled", false );
+      $( "#attr_value" ).prop( "disabled", false );
+      load_data(data_name);
+    }
   });
 
-
-});
 
 
 });
