@@ -67,6 +67,12 @@ text {
 
 }
 
+.arc:hover {
+  transform: scale(1.01,1.01);
+  transform-origin: center bottom;
+
+}
+
 #tooltip {
       position: absolute;
       width: 100px;
@@ -110,13 +116,10 @@ text {
       <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown" id="attr_value">
       <span class="caret"></span></button>
       <ul class="dropdown-menu">
-        <!-- <li><a href="#">HTML</a></li>
-        <li><a href="#">CSS</a></li>
-        <li><a href="#">JavaScript</a></li> -->
       </ul>
-      <!-- <p>Attributes</p> -->
+      
     </div>
-    <!-- <p id="attr_name"> Selected Attribute: <b>cnt</b></p>  -->
+    
     <div class="col-lg-2">
       <input type="range" min="2" max="15" value="5" class="slider" id="myRange">
       <p id="slider_value"></p>
@@ -129,10 +132,6 @@ text {
   <div class="row " style="margin: auto;">
     <div class="col-lg-2 "></div>
     <div class="col-lg-2 ">
-      <!-- <div class="panel panel-primary">
-          <div class="panel-heading">Attributes</div>
-          <div class="panel-body" id= "attributes"></div>
-      </div> -->
       <div class="panel panel-default">            
           <div class="panel-heading site-color">             
                 Upload your csv file
@@ -175,203 +174,200 @@ text {
 <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script> -->
 <script>
 $( document ).ready(function() {
-var current_attr;
-var attributes;
-var num_of_bins = 5
-var csv_data;
-var values = [];
-var bin_data = [];
-var bar_data = []
-var flag = 0
 
-$("#slider_value").html("# of bins: <b>"+$('#myRange').val()+"</b>")
-$("#description").hide()
+  //my global variables
+  var current_attr;
+  var attributes;
+  var num_of_bins = 5
+  var csv_data;
+  var values = [];
+  var bin_data = [];
+  var bar_data = []
+  var flag = 0
 
-$("#myRange").on("change",function(){
-  console.log("hello")
+  //jquery dom activation and events
+
   $("#slider_value").html("# of bins: <b>"+$('#myRange').val()+"</b>")
-  num_of_bins = $('#myRange').val()
-  draw_bar_chart(csv_data, current_attr)
+  $("#description").hide()
 
-})
+  $("#myRange").on("change",function(){
+    console.log("hello")
+    $("#slider_value").html("# of bins: <b>"+$('#myRange').val()+"</b>")
+    num_of_bins = $('#myRange').val()
+    draw_bar_chart(csv_data, current_attr)
 
-$("#force_directed").on("click",function(){
-  if(flag == 0)
-  {
-    draw_force_directed();
-    $("#force_directed").html("Go Back to Bar Chart")
-    $( "#myRange" ).prop( "disabled", true );
-    $( "#attr_value" ).prop( "disabled", true );
-    flag = 1
-    $("#description").show()
+  })
 
-  }
-  else{
+  $("#force_directed").on("click",function(){
+    if(flag == 0)
+    {
+      draw_force_directed();
+      $("#force_directed").html("Go Back to Bar Chart")
+      $( "#myRange" ).prop( "disabled", true );
+      $( "#attr_value" ).prop( "disabled", true );
+      flag = 1
+      $("#description").show()
 
-    draw_bar_chart(csv_data,current_attr);
-    $("#force_directed").html("Foreced Directed Layout")
-    $( "#myRange" ).prop( "disabled", false );
-    $( "#attr_value" ).prop( "disabled", false );
-    flag = 0
-    $("#description").hide()
+    }
+    else{
 
-  }
-    
+      draw_bar_chart(csv_data,current_attr);
+      $("#force_directed").html("Foreced Directed Layout")
+      $( "#myRange" ).prop( "disabled", false );
+      $( "#attr_value" ).prop( "disabled", false );
+      flag = 0
+      $("#description").hide()
 
-})
-
-
-// set the dimensions and margins of the graph
-var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
-    radius = Math.min(width, height) / 2;
-
-// set the ranges
-var x = d3.scaleBand()
-          .range([0, width])
-          .padding(0.1);
-var y = d3.scaleLinear()
-          .range([height, 0]);
-          
-// append the svg object to the body of the page
-// append a 'group' element to 'svg'
-// moves the 'group' element to the top left margin
-var svg=d3.select("#svg_div").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", 
-          "translate(" + margin.left + "," + margin.top + ")");;
-
-
-function draw_bar_chart(data, attr)
-{
-  
-  d3.select("svg").remove()
-  svg = d3.select("#svg_div").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", 
-          "translate(" + margin.left + "," + margin.top + ")");
-  current_attr = attr
-  $("#attr_name").html("Selected Attribute: <b>"+attr+"</b>")
-  
- 
-  values = []
-  bin_data = []
-  bar_data = []
-  temp_values = []
-  var val;
-
-  data.forEach(function(d) {
-      values.push(d[attr]);
-    
-  });
-
-  
-  var min = Math.min.apply(null,values)
-  var max = Math.max.apply(null,values)
-
-  var bin_size = Math.ceil((max-min)/num_of_bins)
-
-  console.log(min,max,bin_size)
-
-  
-  
-  for (var i = 0; i < num_of_bins; i++) {
-    bin_data.push(0)
-  }
-
-  values.forEach(function(d) {
-    bin_data[Math.floor((d-min)/bin_size)] += 1
-  });
-  
-  
-
-  for (var i = 0; i < num_of_bins; i++) {
-    bar_data.push({"index": i+1, "value":bin_data[i]})
-  }
- 
-  var tooltip = d3.select("body").append("div").attr("class", "toolTip");
-
-  
-  console.log(bar_data)
-  //Scale the range of the data in the domains
-  // Scale the range of the data in the domains
-  x.domain(bar_data.map(function(d) { return d.index; }));
-  y.domain([0, d3.max(bar_data, function(d) { return d.value; })]);
-
-  // append the rectangles for the bar chart
-  svg.selectAll(".bar")
-      .data(bar_data)
-    .enter().append("rect")
-      .attr("class", "bar")
-      .attr("x", function(d) { return x(d.index); })
-      .attr("width", x.bandwidth())
-      .attr("y", function(d) { return y(d.value); })
-      .attr("height", function(d) { return height - y(d.value); })
-      .on("mouseover", function(d) {
-
-          // d3.select(this)        
-          //   .style("transform", "scale(1,1.1)")
-          //   .style("transform-origin","0px,-10px)");
-
-          var xPosition = parseFloat(d3.select(this).attr("x"))+50;
-          var yPosition = parseFloat(d3.select(this).attr("y"))-70 ;
-
-          d3.select("#tooltip")
-            .style("left", xPosition+ "px")
-            .style("top", yPosition+ "px")
-            .select("#value")
-            .text(d.value);
-          d3.select("#tooltip").classed("hidden", false);
-
-       })
-      .on("mouseout", function() {
-         d3.select("#tooltip").classed("hidden", true);
-         
-         
-
-      })
+    }
       
 
-  // add the x Axis
-  svg.append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
-
-  // add the y Axis
-  svg.append("g")
-      .call(d3.axisLeft(y));
+  })
 
 
-  svg.on("click",function(){
-    console.log("svg clicked")
-    draw_pie_chart(csv_data)
+  // set the dimensions and margins of the graph
+  var margin = {top: 20, right: 20, bottom: 30, left: 40},
+      width = 960 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
+      radius = Math.min(width, height) / 2;
 
-  });
+  // set the ranges
+  var x = d3.scaleBand()
+            .range([0, width])
+            .padding(0.1);
+  var y = d3.scaleLinear()
+            .range([height, 0]);
+            
+  // append the svg object to the body of the page
+  // append a 'group' element to 'svg'
+  // moves the 'group' element to the top left margin
+  var svg=d3.select("#svg_div").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", 
+            "translate(" + margin.left + "," + margin.top + ")");;
 
-}
+
+  function draw_bar_chart(data, attr)
+  {
+    
+    //remove and initialize svg
+    d3.select("svg").remove()
+    svg = d3.select("#svg_div").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", 
+            "translate(" + margin.left + "," + margin.top + ")");
+    current_attr = attr
+    $("#attr_name").html("Selected Attribute: <b>"+attr+"</b>")
+    
+    // initialize the required arrays and variables
+    values = []
+    bin_data = []
+    bar_data = []
+    temp_values = []
+    var val;
+
+    //create the data arrays for the selected attribute
+    data.forEach(function(d) {
+        values.push(d[attr]);
+      
+    });
+
+    
+    var min = Math.min.apply(null,values)
+    var max = Math.max.apply(null,values)
+
+    var bin_size = Math.ceil((max-min)/num_of_bins)
+
+    console.log(min,max,bin_size)
+
+    for (var i = 0; i < num_of_bins; i++) {
+      bin_data.push(0)
+    }
+
+    values.forEach(function(d) {
+      bin_data[Math.floor((d-min)/bin_size)] += 1
+    });
+    
+
+    for (var i = 0; i < num_of_bins; i++) {
+      bar_data.push({"index": i+1, "value":bin_data[i]})
+    }
+   
+    //define tooltip
+    var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+
+    console.log(bar_data)
+    //Scale the range of the data in the domains
+    // Scale the range of the data in the domains
+    x.domain(bar_data.map(function(d) { return d.index; }));
+    y.domain([0, d3.max(bar_data, function(d) { return d.value; })]);
+
+    // append the rectangles for the bar chart
+    svg.selectAll(".bar")
+        .data(bar_data)
+      .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", function(d) { return x(d.index); })
+        .attr("width", x.bandwidth())
+        .attr("y", function(d) { return y(d.value); })
+        .attr("height", function(d) { return height - y(d.value); })
+        .on("mouseover", function(d) {
+
+            var xPosition = parseFloat(d3.select(this).attr("x"))+50;
+            var yPosition = parseFloat(d3.select(this).attr("y"))-70 ;
+
+            d3.select("#tooltip")
+              .style("left", xPosition+ "px")
+              .style("top", yPosition+ "px")
+              .select("#value")
+              .text(d.value);
+            d3.select("#tooltip").classed("hidden", false);
+
+         })
+        .on("mouseout", function() {
+           d3.select("#tooltip").classed("hidden", true);     
+
+        })
+        
+
+    // add the x Axis
+    svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
+
+    // add the y Axis
+    svg.append("g")
+        .call(d3.axisLeft(y));
+
+    // onclick draw the pie chart
+    svg.on("click",function(){
+      console.log("svg clicked")
+      draw_pie_chart(csv_data)
+
+    });
+
+  }
 
 function draw_pie_chart(data)
 {
+  // hide the tooltip
   d3.select("#tooltip").classed("hidden", true);
   console.log("pie chart")
   
   attr = current_attr
   $("#attr_name").html("Selected Attribute: <b>"+attr+"</b>")
-  //svg.selectAll("*").remove();
-  //format the data
+
   
   if(bin_data.length > num_of_bins)
     bin_data.splice(bin_data.length-1, 1);
 
   console.log(bin_data)
 
-  //var data = [10, 20, 100]; 
-  var color = d3.scaleOrdinal(d3.schemeCategory10);     
+  //define the color scale
+  var color = d3.scaleOrdinal(d3.schemeCategory20);     
 
 
   var arc = d3.arc()
@@ -406,6 +402,7 @@ function draw_pie_chart(data)
         .attr("dy", ".35em")
         .text(function(d) { return d.data; });
 
+    // onclick show pie chart
     svg.on("click",function(){
       console.log("svg clicked")
       draw_bar_chart(csv_data,attr)
@@ -520,11 +517,14 @@ function load_data(file_name)
     $("#description").hide()
     $("#force_directed").html("Foreced Directed Layout")
     flag = 0
+    // add the attributes in the drop down menu
     attrs.forEach(function(d){
 
       $(".dropdown-menu").append('<li><a class="attrs_list" href="#">'+d+'</a></li>')
 
     });
+
+    // drop down on select event
 
     $("li a.attrs_list").click(function(e) {
             $("#attr_value").html(e.target.innerText+'<span class="caret"></span>')
@@ -537,8 +537,11 @@ function load_data(file_name)
   });
 
 }
+
+//initialize data load
 load_data("state-data.csv")
 
+// function to load new files
 $('#file-upload').on('change', function(e) {
 
     //check file length
@@ -558,10 +561,7 @@ $('#file-upload').on('change', function(e) {
     }
   });
 
-
-
 });
 
 </script>
-<script src="forced_directed.js"></script>
 </body>
