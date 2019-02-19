@@ -184,6 +184,7 @@ $( document ).ready(function() {
   var bin_data = [];
   var bar_data = []
   var flag = 0
+  var data_name = "crime_data_clean.csv";
 
   //jquery dom activation and events
 
@@ -271,6 +272,9 @@ $( document ).ready(function() {
 
     //create the data arrays for the selected attribute
     data.forEach(function(d) {
+      if(d[attr] > 0 && data_name == "crime_data_clean.csv" )
+        values.push(Math.log2(d[attr]));
+      else
         values.push(d[attr]);
       
     });
@@ -278,10 +282,12 @@ $( document ).ready(function() {
     
     var min = Math.min.apply(null,values)
     var max = Math.max.apply(null,values)
+    console.log(min,max)
+
 
     var bin_size = Math.ceil((max-min)/num_of_bins)
 
-    console.log(min,max,bin_size)
+    
 
     for (var i = 0; i < num_of_bins; i++) {
       bin_data.push(0)
@@ -348,6 +354,8 @@ $( document ).ready(function() {
       draw_pie_chart(csv_data)
 
     });
+
+    
 
   }
 
@@ -509,7 +517,7 @@ function load_data(file_name)
     $("#title").html("CSE 564 Mini Project: "+ file_name)
     csv_data = data
     console.log(data)
-    current_attr = data["columns"][0]
+    current_attr = data["columns"][1]
     $("#attr_value").html(current_attr+'<span class="caret"></span>')
     draw_bar_chart(csv_data, current_attr)
     attrs = data["columns"]
@@ -539,7 +547,8 @@ function load_data(file_name)
 }
 
 //initialize data load
-load_data("state-data.csv")
+load_data("crime_data_clean.csv")
+
 
 // function to load new files
 $('#file-upload').on('change', function(e) {
