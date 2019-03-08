@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% block content %}
+
+  <!-- main banner/jumbotron start-->
+  <!-- main banner/jumborton ends -->
+    <div class="container-fluid" id="home_container">  
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="jumbotron">
+                  
+                    <h1 class="display-3" style="text-align: center;">Upload your Data!</h1>
+                    <!-- <p>This is a platform to tell story from data. We will use causal model to learn relations from your data.</p> -->
+                    <!-- <div class="panel panel-default">             -->
+                          
+                          <!-- <div class="panel-body"> -->
+
+                              <form id="file-form" enctype="multipart/form-data" style="width: 110px;margin: 0 auto;">
+                                <div class="form-group">
+                                  <label class="btn btn-default btn-file site-color btn-lg">
+                                        Browse <input type="file" id="file-upload" style="display: none;">
+                                  </label>
+                                          
+                                </div>
+                              </form>
+                  
+                </div>
+            </div>
+        </div> 
+        <div class="row">
+            
+            <div class="col-lg-12" align="center" id="svg_div"></div>
+            <br>
+            <div class="col-lg-12" align="center" id="text_div" style="display: none;"> 
+                <p id = "txt" >Please select the K, number of cluster from the plot.</p> <p id="show-k"><b>k=not selected yet</b></p>
+                <button class="btn btn-success site-color" id = "go_button"> GO!</button>
+            </div>
+            <!-- <div class="col-lg-12" align="center"> <button class="btn btn-success site-color" id = "go_button" style="display: none;"> GO!</button></div> -->
+
+                
+        </div>
+    </div>  
+
+    <div class="container-fluid" id="graph_container" style="display: none;">
+        
+        <div class = "row" id="scree-plot">
+            <div class="col-lg-4" id="scree-original">
+                
+            </div>
+            <div class="col-lg-4" id="scree-random">
+                
+            </div>
+            <div class="col-lg-4" id="scree-stratified">
+                
+            </div>
+            
+        </div>
+    </div> 
+</div>
+    
+{% endblock content %}

@@ -1,0 +1,94 @@
+.--flow-graph .linkgroup .link {
+    fill: none;
+    /*stroke-opacity: 0.8;*/
+    pointer-events: visibleStroke;
+}
+
+.--flow-graph .linkgroup .link.undir {
+    stroke: #0277BD;
+    stroke-dasharray: 6, 8;
+}
+
+.--flow-graph .linkgroup .link.pos {
+    stroke: #009E73;
+}
+
+.--flow-graph .linkgroup .link.neg {
+    stroke: #CC6666;
+}
+
+.--flow-graph .linkgroup .link.com {
+    stroke: #FF9800;
+}
+
+.--flow-graph .linkgroup .link.dir {
+    stroke: #0277BD;
+}
+
+.--flow-graph .linkgroup .arrow {
+    stroke: none;
+    fill: none;
+}
+
+.--flow-graph .linkgroup .arrow.none {
+    stroke: none;
+    fill: none;
+}
+
+.--flow-graph .linkgroup .arrow.pos {
+    fill: #009E73;
+    stroke: #009E73;
+}
+
+.--flow-graph .linkgroup .arrow.neg {
+    fill: #CC6666;
+    stroke: #CC6666;
+}
+
+.--flow-graph .linkgroup .arrow.com {
+    fill: #FF9800;
+    stroke: #FF9800;
+}
+
+.--flow-graph .linkgroup .arrow.dir {
+    fill: #0277BD;
+    stroke: #0277BD;
+}
+
+.--flow-graph .linkgroup .glyph.non {
+    stroke: none;
+}
+
+.--flow-graph .linkgroup .glyph.pos {
+    stroke: #009E73;
+}
+
+.--flow-graph .linkgroup .glyph.neg {
+    stroke: #CC6666;
+}
+
+.--flow-graph .nodegroup .label {
+    text-anchor: middle;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+}
+
+.--flow-graph .nodegroup>.label-bg {
+    fill: white;
+    stroke-opacity: 0.7;
+}
+
+.--flow-graph .nodegroup>.label-bg.num {
+    stroke: #0277BD;
+}
+
+.--flow-graph .nodegroup>.label-bg.cat {
+    stroke: #FF9800;
+}
+
+.--flow-graph .nodegroup>.label-bg.unset {
+    stroke: #9E9E9E;
+}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='vendor/bootstrap/bootstrap.css')}}">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/flow.css') }}">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/custom.css') }}">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='vendor/semantic/semantic.min.css') }}">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/blog_layout.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/timeline.css') }}">
+    <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"> -->
+
+    {% if title %}
+        <title>CSE-564 - {{ title }}</title>
+    {% else %}
+        <title>CSE-564</title>
+    {% endif %}
+</head>
+<body>
+
+	<!-- Nav bar start -->
+	<nav class="navbar-centered centering navbar-expand-lg navbar-dark site-color" style="text-align: center;">
+		<a class="navbar-brand" href="{{url_for('home')}}" >Data Exploration</a>
+	</nav>
+	<!-- Nav bar end -->
+	
+	<!-- main container start -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+
+    <!-- main container ends -->
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script type = "text/javascript" src="{{ url_for('static', filename='vendor/jquery/jquery-3.3.1.min.js') }}"></script>
+    <script type = "text/javascript" src="{{ url_for('static', filename='vendor/popper.min.js') }}"></script>
+    <script type = "text/javascript" src="{{ url_for('static', filename='vendor/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/semantic/semantic.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/d3/d3.min.js') }}"></script>
+    
+
+    <!-- user js files -->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/flow.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/flowlayout.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/score.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/accordions.js') }}"></script>
+    
+    <script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/timeline.js') }}"></script>
+    <!-- <script type="text/javascript" async src="{{ url_for('static', filename='js/graph_viz.js') }}"></script> -->
+    
+
+</body>
+</html>
+

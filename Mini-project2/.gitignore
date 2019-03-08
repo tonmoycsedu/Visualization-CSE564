@@ -1,0 +1,4 @@
+.DS_Store
+*.pyc
+pycausal/__pycache__/*
+__pycache__/*
