@@ -40,8 +40,8 @@
         </div>
     </div>  
 
-    <div class="container-fluid" id="graph_container" style="display: none;">
-        
+    <div class="container-fluid" id="graph_container1" style="display: none;">
+
         <div class = "row" id="scree-plot">
             <div class="col-lg-4" id="scree-original">
                 
@@ -54,7 +54,121 @@
             </div>
             
         </div>
+
+        <div class = "row" id="scatter-plot">
+            <div class="col-lg-4" id="scatter-original">
+                
+            </div>
+            <div class="col-lg-4" id="scatter-random">
+                
+            </div>
+            <div class="col-lg-4" id="scatter-stratified">
+                
+            </div>
+            
+        </div>
+
+        <div class = "row" id="mds-plot">
+            <div class="col-lg-4" id="mds-original">
+                
+            </div>
+            <div class="col-lg-4" id="mds-random">
+                
+            </div>
+            <div class="col-lg-4" id="mds-stratified">
+                
+            </div>
+            
+        </div>
+
     </div> 
+    <div class="container-fluid" id="pca_loading" style="display: none;">
+
+        <div class = "row" id="loading_row">
+            <div class="col-lg-4" id="loading_div" align="center">
+                <table class = "table" id="loading_original">
+                    <caption align="top">Original Dataset</caption>
+                    <thead>
+                        <tr>
+                          <th scope="col"></th>
+                          <th scope="col">PCA Component1</th>
+                          <th scope="col">PCA Component2</th>
+                          <th scope="col">PCA Component3</th>
+                        </tr>
+                    </thead>                    
+                </table>                
+            </div>
+            <div class="col-lg-4" id="loading_div" align="center">
+                <table class="table" id="loading_random">
+                    <caption align="top">Random Dataset</caption>
+                    <thead>
+                        <tr>
+                          <th scope="col"></th>
+                          <th scope="col">PCA Component1</th>
+                          <th scope="col">PCA Component2</th>
+                          <th scope="col">PCA Component3</th>
+                        </tr>
+                    </thead>
+                    
+                </table>
+                
+            </div>
+            <div class="col-lg-4" id="loading_div" align="center">
+                <table class="table" id="loading_stratified">
+                    <caption align="top">Stratified Dataset</caption>
+                    <thead>
+                        <tr>
+                          <th scope="col"></th>
+                          <th scope="col">PCA Component1</th>
+                          <th scope="col">PCA Component2</th>
+                          <th scope="col">PCA Component3</th>
+                        </tr>
+                    </thead>
+                    
+                </table>
+                
+            </div>
+            
+        </div>
+
+        <div class = "row" id="scatter-mat" style="display: none;">
+            <div class="col-lg-4" align="center">
+                <form>
+                    <div class="radio">
+                      <label><input class= "sc-option" type="radio" name="optradio" value = "Original Dataset" checked>Original Dataset</label>
+                    </div>
+                    <div class="radio">
+                      <label><input class= "sc-option" type="radio" value = "Random Dataset" name="optradio">Random Dataset</label>
+                    </div>
+                    <div class="radio disabled">
+                      <label><input class= "sc-option" type="radio" value = "Stratified Dataset" name="optradio">Stratified Dataset</label>
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-8" id="scatter-mat-original">
+                
+            </div>
+
+            <div class="col-lg-8"  id="scatter-mat-random" style="display: none;">
+                
+            </div>
+            <div class="col-lg-8"  id="scatter-mat-stratified" style="display: none;">
+                
+            </div>
+            
+            
+        </div>
+
+    </div> 
+    <div class="container-fluid" id="button_container">
+
+        <div class = "row">
+            <div class="col-lg-12">
+                <button class="btn btn-success" id="sc-matrix" style="float: left; display: none;">See Scatter Matrix</button>
+                <button class="btn btn-success" id="pagination" style="float: right; display: none;">Next Page</button>
+            </div>
+        </div>
+    </div>
 </div>
     
 {% endblock content %}
